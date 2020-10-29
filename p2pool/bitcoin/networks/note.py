@@ -20,7 +20,7 @@ SUBSIDY_FUNC = lambda height: 50*100000000 >> (height + 1)//1051200
 POW_FUNC = lambda data: pack.IntType(256).unpack(__import__('ltc_scrypt').getPoWHash(data))
 BLOCK_PERIOD = 30 # 30 seconds
 SYMBOL = 'NTBC'
-CONF_FILE_FUNC = lambda: os.path.join(os.path.join(os.environ['APPDATA'], 'Note') if platform.system() == 'Windows' else os.path.expanduser('~/Library/Application Support/Note/') if platform.system() == 'Darwin' else os.path.expanduser('~/.note'), 'note.conf')
+CONF_FILE_FUNC = lambda: os.path.join(os.path.join(os.environ['APPDATA'], 'Notecoin') if platform.system() == 'Windows' else os.path.expanduser('~/Library/Application Support/Notecoin/') if platform.system() == 'Darwin' else os.path.expanduser('~/.note'), 'notecoin.conf')
 BLOCK_EXPLORER_URL_PREFIX = 'http://explorer.notebc.io/'
 ADDRESS_EXPLORER_URL_PREFIX = 'http://explorer.notebc.io/address/'
 TX_EXPLORER_URL_PREFIX = 'http://explorer.notebc.io/tx/'
