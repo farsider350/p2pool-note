@@ -462,33 +462,10 @@ class BaseShare(object):
         # check for excessive fees
         if self.share_data['previous_share_hash'] is not None and block_abs_height_func is not None:
             height = (block_abs_height_func(self.header['previous_block'])+1)
-            base_subsidy = self.net.PARENT.SUBSIDY_FUNC(height)
             #print "height == %i, base_subsidy = %i, hash = %x" % (height, base_subsidy, self.header['previous_block'])
             fees = [feecache[x] for x in other_tx_hashes if x in feecache]
             missing = sum([1 for x in other_tx_hashes if not x in feecache])
-            #print "Missing %i transactions of %i with %i known" % (missing, len(other_tx_hashes), len(feecache))
-            if missing == 0:
-                max_subsidy = sum(fees) + base_subsidy
-                details = "Max allowed = %i, requested subsidy = %i, share hash = %064x, miner = %s" % (max_subsidy, self.share_data['subsidy'], self.hash, bitcoin_data.script2_to_address(self.new_script, self.net.PARENT))
-                if self.share_data['subsidy'] > max_subsidy:
-                    self.naughty = 1
-                    # Raising an error would make running this code fork the network. Perhaps we can include this when we fork to share version 34.
-                    # But probably not. This detection of naughty shares is still heuristic, and will sometimes fail to detect a naughty share
-                    # when the feecache is empty.
-                    # For now, we'll just punish shares via the self.naughty = True flag.
-                    # raise ValueError("Excessive block reward in share! Naughty. " + details)
-                    print "Excessive block reward in share! Naughty. " + details
-                elif self.share_data['subsidy'] < max_subsidy:
-                    print "Strange, we received a share that did not include as many coins in the block reward as was allowed. "
-                    print "While permitted by the protocol, this causes coins to be lost forever if mined as a block, and costs us money."
-                    print details
-        if self.share_data['previous_share_hash'] and tracker.items[self.share_data['previous_share_hash']].naughty:
-            print "naughty ancestor found %i generations ago" % tracker.items[self.share_data['previous_share_hash']].naughty
             # I am not easily angered ...
-            print "I will not fail to punish children and grandchildren to the third and fourth generation for the sins of their parents."
-            self.naughty = 1 + tracker.items[self.share_data['previous_share_hash']].naughty
-            if self.naughty > 6:
-                self.naughty = 0
 
         assert other_tx_hashes2 == other_tx_hashes
         if share_info != self.share_info:
